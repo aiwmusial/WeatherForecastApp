@@ -1,0 +1,32 @@
+// WMO Weather interpretation codes (WW) from Weather variable documentation https://open-meteo.com/ 
+
+export const weatherCodes = {
+    0: { description: "Clear sky", icon: "fa-sun" },
+    1: { description: "Mainly clear", icon: "fa-cloud-sun" },
+    2: { description: "Partly cloudy", icon: "fa-cloud-sun-rain" },
+    3: { description: "Overcast", icon: "fa-cloud" },
+    45: { description: "Fog", icon: "fa-smog" },
+    48: { description: "Depositing rime fog", icon: "fa-smog" },
+    51: { description: "Drizzle: Light intensity", icon: "fa-cloud-rain" },
+    53: { description: "Drizzle: Moderate intensity", icon: "fa-cloud-showers-heavy" },
+    55: { description: "Drizzle: Dense intensity", icon: "fa-cloud-showers-heavy" },
+    56: { description: "Freezing Drizzle: Light intensity", icon: "fa-icicles" },
+    57: { description: "Freezing Drizzle: Dense intensity", icon: "fa-icicles" },
+    61: { description: "Rain: Slight intensity", icon: "fa-cloud-rain" },
+    63: { description: "Rain: Moderate intensity", icon: "fa-cloud-showers-heavy" },
+    65: { description: "Rain: Heavy intensity", icon: "fa-cloud-showers-heavy" },
+    66: { description: "Freezing Rain: Light intensity", icon: "fa-snowflake" },
+    67: { description: "Freezing Rain: Heavy intensity", icon: "fa-snowflake" },
+    71: { description: "Snow fall: Slight intensity", icon: "fa-snowflake" },
+    73: { description: "Snow fall: Moderate intensity", icon: "fa-snowflake" },
+    75: { description: "Snow fall: Heavy intensity", icon: "fa-snowflake" },
+    77: { description: "Snow grains", icon: "fa-snowflake" },
+    80: { description: "Rain showers: Slight intensity", icon: "fa-cloud-rain" },
+    81: { description: "Rain showers: Moderate intensity", icon: "fa-cloud-showers-heavy" },
+    82: { description: "Rain showers: Violent intensity", icon: "fa-poo-storm" },
+    85: { description: "Snow showers: Slight intensity", icon: "fa-snowflake" },
+    86: { description: "Snow showers: Heavy intensity", icon: "fa-snowflake" },
+    95: { description: "Thunderstorm: Slight or moderate", icon: "fa-bolt" },
+    96: { description: "Thunderstorm with slight hail", icon: "fa-cloud-meatball" },
+    99: { description: "Thunderstorm with heavy hail", icon: "fa-cloud-meatball" }
+};
