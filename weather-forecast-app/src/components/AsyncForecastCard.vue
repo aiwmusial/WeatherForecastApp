@@ -8,7 +8,16 @@ import WeatherForecastListItem from "../components/WeatherForecastListItem.vue"
 
 const route = useRoute();
 
-const weatherData = ref(null);
+const weatherData = ref({
+    current: null,
+    hourly: {
+        time: [],
+        temperature_2m: [],
+        precipitation: [],
+        precipitation_probability: [],
+        weather_code: [] 
+    }
+});
 const error = ref(null);
 
 const getWeatherForecast = () => {
@@ -20,7 +29,16 @@ const getWeatherForecast = () => {
         return response.json();
     })
     .then((json) => {
-        weatherData.value = json;
+        weatherData.value = {
+            current: json.current,
+            hourly: {
+                time: json.hourly.time,
+                temperature_2m: json.hourly.temperature_2m,
+                precipitation: json.hourly.precipitation,
+                precipitation_probability: json.hourly.precipitation_probability,
+                weather_code: json.hourly.weather_code
+            }
+        };        
         error.value = null; 
         return { weatherData, error };
     })
