@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { weatherCodes } from "@/assets/weatherCodes.js";
 import  WeatherForecastChart from "../components/WeatherForecastChart.vue";
@@ -76,6 +76,18 @@ const getWeatherIcon = (code) => {
 
 const weatherForecastData = await getWeatherForecast();
 
+const minTemperature = computed(() => {
+    return Math.floor(Math.min(...weatherData.value.hourly.temperature_2m) / 5) * 5;
+});
+
+const maxTemperature = computed(() => {
+    return Math.ceil(Math.max(...weatherData.value.hourly.temperature_2m) / 5) * 5;
+});
+
+const maxPrecipitation = computed(() => {
+    return Math.ceil(Math.max(...weatherData.value.hourly.precipitation) / 5) * 5;
+});
+
 </script>
 
 <template>
@@ -92,9 +104,9 @@ const weatherForecastData = await getWeatherForecast();
                 :days="weatherData.hourly.time.map(dateTime => formatDate(dateTime))"
                 :precipitationData="weatherData.hourly.precipitation"
                 :temperatureData="weatherData.hourly.temperature_2m"
-                :minTemperature="Math.floor(Math.min(...weatherData.hourly.temperature_2m) / 5) * 5"
-                :maxTemperature="Math.ceil(Math.max(...weatherData.hourly.temperature_2m)/ 5) * 5"
-                :maxPrecipitation="Math.ceil(Math.max(...weatherData.hourly.precipitation)/ 5) * 5"
+                :minTemperature="minTemperature"
+                :maxTemperature="maxTemperature"
+                :maxPrecipitation="maxPrecipitation"
             />
             <ul class="list-group">
                 <WeatherForecastListItem 
