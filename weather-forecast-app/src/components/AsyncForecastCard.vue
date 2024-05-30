@@ -11,16 +11,25 @@ const route = useRoute();
 const weatherData = ref(null);
 const error = ref(null);
 
-const getWeatherForecast = async () => {
-    try {
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${route.query.lat}&longitude=${route.query.lon}&current=temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&timezone=auto&forecast_days=1`);
-        const json = await response.json();
+const getWeatherForecast = () => {
+    return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${route.query.lat}&longitude=${route.query.lon}&current=temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&timezone=auto&forecast_days=1`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    })
+    .then((json) => {
         weatherData.value = json;
-    } catch (err) {
+        error.value = null; 
+        return { weatherData, error };
+    })
+    .catch(err => {
         error.value = err;
-    }
+        weatherData.value = null;
+        return { weatherData, error };
+    });
 }
-const weatherForecastData = await getWeatherForecast();
 
 const formatDate = (date) => {
     const dateForecast = date.split("T");
@@ -30,13 +39,13 @@ const formatDate = (date) => {
 const formatDateUkString = (date) => {
     const forecastDate = new Date(date)
     return forecastDate.toLocaleDateString("en-GB", 
-        {
-            weekday: "long",
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-        }
-    ) 
+    {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    }
+) 
 }
 
 const getWeatherDescription = (code) => {
@@ -46,6 +55,9 @@ const getWeatherDescription = (code) => {
 const getWeatherIcon = (code) => {
     return weatherCodes[code] ? `fas ${weatherCodes[code].icon} fa-2xl ms-3` : '';
 }
+
+const weatherForecastData = await getWeatherForecast();
+
 </script>
 
 <template>

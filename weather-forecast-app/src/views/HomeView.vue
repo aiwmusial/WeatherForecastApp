@@ -10,30 +10,38 @@ const geocodingApiKey = "6983cc41892715076eeeb6e47c2392f3"
 const data = ref(null)
 const error = ref(null)
 
-const getCityCoordinates = async () => {
+const getCityCoordinates = () =>{
 	if (searchCity.value) {
-	try {
-		const response = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchCity.value}&limit=10&appid=${geocodingApiKey}`);
-		const json = await response.json();
-		data.value = json; 
-		searchCity.value = ""; 
-	} catch (err) {
-		error.value = err; 
+		return fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchCity.value}&limit=10&appid=${geocodingApiKey}`)
+			.then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((json) => {
+                data.value = json;
+                searchCity.value = "";
+                error.value = null; 
+                return { data, error };
+            })
+            .catch(err => {
+                error.value = err;
+                data.value = null;
+                return { data, error };
+            });		
 	}
-	return { data, error }; 
-	}
-	return; 
+	return Promise.resolve({ data, error });
 }
-
 const selectCityFromList = (city) => {
 	router.push({
-	name: "forecast",
-	params: {city: city.name, state: city.state, country: city.country},
-	query: {
-		lat: city.lat,
-		lon: city.lon, 
-		preview: true
-	},
+		name: "forecast",
+		params: {city: city.name, state: city.state, country: city.country},
+		query: {
+			lat: city.lat,
+			lon: city.lon, 
+			preview: true
+		},
 	})
 }
 </script>
