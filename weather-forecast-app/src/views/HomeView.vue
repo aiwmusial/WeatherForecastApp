@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { geocodingApiKey } from "../apikey.js"
 
 const router = useRouter();
 
 const searchCity = ref("");
-const geocodingApiKey = "6983cc41892715076eeeb6e47c2392f3"
 
 const data = ref(null)
 const error = ref(null)
