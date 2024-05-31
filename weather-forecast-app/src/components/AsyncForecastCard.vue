@@ -20,6 +20,33 @@ const weatherData = ref({
 });
 const error = ref(null);
 
+const isValidWeatherData = (json) => {
+    const isValidCurrent = json.current && 
+                            typeof json.current.temperature_2m === 'number' && 
+                            typeof json.current.time === 'string';
+
+    const isValidHourly = json.hourly &&
+        Array.isArray(json.hourly.time) && 
+            json.hourly.time.every(time => typeof time === 'string') &&
+        Array.isArray(json.hourly.temperature_2m) && 
+            json.hourly.temperature_2m.every(temp => typeof temp === 'number') &&
+        Array.isArray(json.hourly.precipitation) && 
+            json.hourly.precipitation.every(precip => typeof precip === 'number') &&
+        Array.isArray(json.hourly.precipitation_probability) && 
+            json.hourly.precipitation_probability.every(prob => typeof prob === 'number') &&
+        Array.isArray(json.hourly.weather_code) && 
+            json.hourly.weather_code.every(code => typeof code === 'number');
+
+    const arraysHaveEqualLength = isValidHourly && (
+        json.hourly.time.length === json.hourly.temperature_2m.length &&
+        json.hourly.temperature_2m.length === json.hourly.precipitation.length &&
+        json.hourly.precipitation.length === json.hourly.precipitation_probability.length &&
+        json.hourly.precipitation_probability.length === json.hourly.weather_code.length
+    );
+
+    return isValidCurrent && isValidHourly && arraysHaveEqualLength;
+}
+
 const getWeatherForecast = () => {
     return fetch(`https://api.open-meteo.com/v1/forecast?latitude=${route.query.lat}&longitude=${route.query.lon}&current=temperature_2m&hourly=temperature_2m,precipitation_probability,precipitation,weather_code&timezone=auto&forecast_days=1`)
     .then(response => {
@@ -29,17 +56,22 @@ const getWeatherForecast = () => {
         return response.json();
     })
     .then((json) => {
-        weatherData.value = {
-            current: json.current,
-            hourly: {
-                time: json.hourly.time,
-                temperature_2m: json.hourly.temperature_2m,
-                precipitation: json.hourly.precipitation,
-                precipitation_probability: json.hourly.precipitation_probability,
-                weather_code: json.hourly.weather_code
-            }
-        };        
-        error.value = null; 
+        if(isValidWeatherData(json)){
+            weatherData.value = {
+                current: json.current,
+                hourly: {
+                    time: json.hourly.time,
+                    temperature_2m: json.hourly.temperature_2m,
+                    precipitation: json.hourly.precipitation,
+                    precipitation_probability: json.hourly.precipitation_probability,
+                    weather_code: json.hourly.weather_code
+                }
+            };   
+                 
+            error.value = null; 
+        } else {
+            throw new Error("Invalid data format");
+        }
         return { weatherData, error };
     })
     .catch(err => {
