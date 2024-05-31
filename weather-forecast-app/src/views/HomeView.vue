@@ -10,6 +10,16 @@ const geocodingApiKey = "6983cc41892715076eeeb6e47c2392f3"
 const data = ref(null)
 const error = ref(null)
 
+const isValidCity = (city) => {
+  return city &&
+    typeof city.lat === 'number' &&
+    typeof city.lon === 'number' &&
+    typeof city.name === 'string' &&
+    (typeof city.state === 'string' || city.state === null) &&
+    typeof city.country === 'string';
+}
+
+
 const getCityCoordinates = () =>{
 	if (searchCity.value) {
 		return fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${searchCity.value}&limit=10&appid=${geocodingApiKey}`)
@@ -20,10 +30,14 @@ const getCityCoordinates = () =>{
                 return response.json();
             })
             .then((json) => {
-                data.value = json;
-                searchCity.value = "";
-                error.value = null; 
-                return { data, error };
+				if (Array.isArray(json) && json.every(isValidCity)) {
+					data.value = json;
+					searchCity.value = "";
+					error.value = null; 
+					return { data, error };
+				} else {
+					throw new Error("Invalid data format");
+				}				
             })
             .catch(err => {
                 error.value = err;
